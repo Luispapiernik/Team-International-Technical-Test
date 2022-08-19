@@ -1,3 +1,6 @@
+"""Custom errors and warnings"""
+
+
 class DataCaptureError(Exception):
     pass
 
