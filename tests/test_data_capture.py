@@ -26,8 +26,10 @@ def test_add_method_raise_error_on_bad_range():
 def test_build_stats_method_when_no_data():
     data_capture = DataCapture()
 
-    with pytest.warns(LackOfDataWarning):
-        stats = data_capture.build_stats()
+    with pytest.warns(LackOfDataWarning) as record:
+        data_capture.build_stats()
+        assert len(record) == 1
+        assert str(record[0].message) == "There is no data to compute"
 
 
 # all numbers must be in the range [0, 1000] otherwise a exception must be raise
@@ -75,13 +77,13 @@ def test_between_method_raise_error_on_bad_range():
     with pytest.raises(OutOfRangeError):
         data_capture.between(-1, 10)
 
-    stats.greater(2, 5)
+    stats.between(2, 5)
 
     with pytest.raises(OutOfRangeError):
-        data_capture.greater(23, 1001)
+        data_capture.between(23, 1001)
 
     with pytest.raises(OutOfRangeError):
-        data_capture.greater(-1, 1001)
+        data_capture.between(-1, 1001)
 
 
 def test_less_for_correct_values():
@@ -146,7 +148,11 @@ def test_between_for_correct_values():
     assert stats.between(8, 9) == 1
     assert stats.between(8, 10) == 1
     assert stats.between(5, 10) == 2
-    assert stats.between(2, 8) == 3
+    assert stats.between(2, 8) == 4
     assert stats.between(0, 9) == 5
-    assert stats.between(1, 7) == 3
+    assert stats.between(1, 7) == 4
     assert stats.between(0, 1000) == 5
+
+
+# TODO: Test with different orders for the between method arguments
+# TODO: Test all the methods with the limit cases e.g. 0 and 1000
